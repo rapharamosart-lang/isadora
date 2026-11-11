@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convite — Isadora</title>
+<meta name="description" content="Cerimônia de Bênção da Isadora — 15 de novembro, às 10h20, na Igreja Batista Betel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400;1,500&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbf6f4;
+    --arch:#f8e9e6;
+    --rose:#c97f86;
+    --rose-dark:#a95f68;
+    --rose-soft:#e9b7b9;
+    --text:#7d6a62;
+    --text-strong:#6b5850;
+    --leaf:#a5a98f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{
+    background:var(--bg);
+    font-family:'Quicksand',system-ui,sans-serif;
+    color:var(--text);
+    display:flex;justify-content:center;align-items:center;
+    min-height:100vh;padding:24px 16px;overflow-x:hidden;
+  }
+
+  .card{
+    position:relative;width:100%;max-width:520px;
+    text-align:center;padding:40px 28px 56px;
+  }
+  /* arco de fundo */
+  .arch{
+    position:absolute;inset:110px 0 0 0;
+    background:linear-gradient(180deg,var(--arch) 0%,#fbefec 60%,#fdf5f3 100%);
+    border-radius:50% 50% 0 0 / 260px 260px 0 0;
+    transform-origin:bottom center;
+    animation:archRise 1.4s cubic-bezier(.2,.8,.2,1) both;
+    z-index:0;
+  }
+  .card > *:not(.arch):not(.petals){position:relative;z-index:1}
+
+  /* cruz desenhada */
+  .cross{width:130px;height:150px;margin:0 auto 18px;display:block;overflow:visible}
+  .cross .beam{
+    stroke:var(--rose-soft);stroke-width:5;stroke-linecap:round;fill:none;
+    stroke-dasharray:200;stroke-dashoffset:200;
+    animation:draw 1.1s ease-out forwards;
+  }
+  .cross .beam.v{animation-delay:.5s}
+  .cross .beam.h{animation-delay:1.1s}
+  .bloom{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:bloom .7s cubic-bezier(.3,1.6,.5,1) forwards}
+  .leaf{opacity:0;animation:leafIn .8s ease-out forwards}
+
+  .eyebrow{
+    font-size:clamp(1rem,4.4vw,1.45rem);font-weight:500;letter-spacing:.04em;
+    color:var(--text);
+  }
+  .eyebrow span{display:inline-block;opacity:0;transform:translateY(14px);animation:wordUp .7s ease-out forwards}
+
+  .name{
+    font-family:'Playfair Display',serif;font-style:italic;font-weight:400;
+    font-size:clamp(4rem,19vw,7.4rem);line-height:1.05;margin:4px 0 6px;
+    color:var(--rose-dark);
+    white-space:nowrap;
+  }
+  .name .l{
+    display:inline-block;opacity:0;
+    background:linear-gradient(180deg,#d9979c 0%,var(--rose-dark) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    padding:0 .04em;margin:0 -.04em;
+    transform:translateY(-60px) rotate(-12deg) scale(.6);filter:blur(6px);
+    animation:letterDrop .9s cubic-bezier(.2,1.4,.4,1) forwards;
+  }
+
+  .divider{display:flex;align-items:center;justify-content:center;gap:18px;margin:10px 0 26px}
+  .divider i{display:block;height:1px;width:110px;background:var(--rose-soft);transform:scaleX(0);animation:grow .9s ease-out forwards}
+  .divider i:first-child{transform-origin:right}
+  .divider i:last-child{transform-origin:left}
+  .divider svg{width:26px;height:26px;transform:scale(0) rotate(-90deg);animation:spinIn .8s cubic-bezier(.3,1.5,.5,1) forwards}
+
+  .message{font-size:clamp(1rem,4vw,1.2rem);line-height:1.6;font-weight:500;max-width:420px;margin:0 auto}
+  .message .w{display:inline-block;opacity:0;transform:translateY(10px);animation:wordUp .55s ease-out forwards}
+  .message strong{font-weight:700;color:var(--text-strong)}
+
+  .info{
+    margin:32px auto 0;max-width:420px;padding:22px 22px;
+    border:1px solid #e3c4c3;border-radius:22px;background:rgba(255,255,255,.35);
+    text-align:left;opacity:0;transform:translateY(30px) scale(.96);
+    animation:cardIn .9s cubic-bezier(.2,.9,.3,1.2) forwards;
+  }
+  .row{display:flex;align-items:center;gap:16px}
+  .row + .row{margin-top:16px;align-items:flex-start}
+  .row svg{flex:0 0 34px;width:34px;height:34px;stroke:var(--rose);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+  .date{font-size:clamp(1.1rem,4.6vw,1.45rem);font-weight:700;color:var(--text-strong)}
+  .date .sep{color:var(--rose-soft);font-weight:400;margin:0 8px}
+  .place{font-size:clamp(1.05rem,4.3vw,1.3rem);font-weight:600;color:var(--text-strong)}
+  .addr{font-size:clamp(.95rem,3.9vw,1.1rem);margin-top:2px}
+
+  .closing{
+    margin-top:30px;font-style:italic;font-size:clamp(1.05rem,4.4vw,1.35rem);font-weight:500;
+    opacity:0;letter-spacing:.3em;filter:blur(4px);
+    animation:breathe 1.4s ease-out forwards;
+  }
+  .branch{width:min(260px,70%);margin:26px auto 0;display:block;overflow:visible}
+  .branch .stem{stroke:var(--leaf);stroke-width:1.4;fill:none;stroke-dasharray:300;stroke-dashoffset:300;animation:draw 1.4s ease-out forwards}
+
+  /* pétalas caindo */
+  .petals{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+  .petal{
+    position:absolute;top:-30px;width:12px;height:10px;
+    background:radial-gradient(circle at 30% 30%,#fbd3d4,#e9a9ad);
+    border-radius:80% 0 80% 0;opacity:.8;
+    animation:fall linear infinite;
+  }
+
+  @keyframes archRise{from{transform:scaleY(.2);opacity:0}to{transform:scaleY(1);opacity:1}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes bloom{to{transform:scale(1)}}
+  @keyframes leafIn{to{opacity:1}}
+  @keyframes wordUp{to{opacity:1;transform:none}}
+  @keyframes letterDrop{
+    60%{filter:blur(0)}
+    to{opacity:1;transform:none;filter:blur(0)}
+  }
+  @keyframes grow{to{transform:scaleX(1)}}
+  @keyframes spinIn{to{transform:scale(1) rotate(0)}}
+  @keyframes cardIn{to{opacity:1;transform:none}}
+  @keyframes breathe{to{opacity:1;letter-spacing:.02em;filter:blur(0)}}
+  @keyframes fall{
+    0%{transform:translate(0,0) rotate(0)}
+    50%{transform:translate(40px,50vh) rotate(180deg)}
+    100%{transform:translate(-20px,105vh) rotate(360deg)}
+  }
+  /* respiração suave contínua do nome */
+  .name.alive{animation:float 5s ease-in-out infinite}
+  @keyframes float{50%{transform:translateY(-4px)}}
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important}
+    .petals{display:none}
+  }
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="arch" aria-hidden="true"></div>
+
+  <!-- Cruz com flores -->
+  <svg class="cross" viewBox="0 0 130 150" aria-hidden="true">
+    <line class="beam v" x1="65" y1="2" x2="65" y2="148"/>
+    <line class="beam h" x1="18" y1="44" x2="112" y2="44"/>
+    <g fill="#a5a98f">
+      <ellipse class="leaf" cx="42" cy="18" rx="9" ry="4" transform="rotate(30 42 18)" style="animation-delay:1.7s"/>
+      <ellipse class="leaf" cx="100" cy="62" rx="9" ry="4" transform="rotate(25 100 62)" style="animation-delay:1.9s"/>
+      <ellipse class="leaf" cx="50" cy="80" rx="8" ry="3.5" transform="rotate(-60 50 80)" style="animation-delay:2.0s"/>
+      <ellipse class="leaf" cx="30" cy="72" rx="7" ry="3" transform="rotate(-20 30 72)" style="animation-delay:2.1s"/>
+    </g>
+    <g class="bloom" style="animation-delay:1.8s">
+      <g fill="#f2b8bb"><circle cx="85" cy="30" r="6"/><circle cx="93" cy="35" r="6"/><circle cx="90" cy="44" r="6"/><circle cx="80" cy="44" r="6"/><circle cx="77" cy="35" r="6"/></g>
+      <circle cx="85" cy="38" r="3" fill="#d98a8f"/>
+    </g>
+    <g class="bloom" style="animation-delay:2.05s">
+      <g fill="#f2b8bb"><circle cx="45" cy="60" r="6"/><circle cx="53" cy="65" r="6"/><circle cx="50" cy="74" r="6"/><circle cx="40" cy="74" r="6"/><circle cx="37" cy="65" r="6"/></g>
+      <circle cx="45" cy="68" r="3" fill="#d98a8f"/>
+    </g>
+    <circle class="bloom" cx="105" cy="22" r="3.5" fill="#f2b8bb" style="animation-delay:2.2s"/>
+    <circle class="bloom" cx="112" cy="16" r="3" fill="#f2b8bb" style="animation-delay:2.3s"/>
+    <circle class="bloom" cx="26" cy="86" r="3" fill="#f2b8bb" style="animation-delay:2.35s"/>
+  </svg>
+
+  <p class="eyebrow" id="eyebrow">Cerimônia de Bênção da</p>
+
+  <h1 class="name" id="name" aria-label="Isadora">Isadora</h1>
+
+  <div class="divider" aria-hidden="true">
+    <i style="animation-delay:3.6s"></i>
+    <svg viewBox="0 0 26 26" style="animation-delay:3.8s">
+      <g fill="#f2b8bb"><circle cx="13" cy="7" r="5"/><circle cx="19" cy="11.5" r="5"/><circle cx="17" cy="19" r="5"/><circle cx="9" cy="19" r="5"/><circle cx="7" cy="11.5" r="5"/></g>
+      <circle cx="13" cy="13.5" r="2.4" fill="#d98a8f"/>
+    </svg>
+    <i style="animation-delay:3.6s"></i>
+  </div>
+
+  <p class="message" id="message">Com amor e gratidão, convidamos você para um momento especial: a apresentação da nossa pequena Isadora a <strong>Deus</strong>.</p>
+
+  <section class="info" style="animation-delay:6.2s" aria-label="Data e local">
+    <div class="row">
+      <svg viewBox="0 0 34 34" aria-hidden="true"><rect x="4" y="7" width="26" height="23" rx="4"/><path d="M4 14h26M11 4v6M23 4v6"/></svg>
+      <p class="date">15 de novembro<span class="sep">|</span>10h20</p>
+    </div>
+    <div class="row">
+      <svg viewBox="0 0 34 34" aria-hidden="true"><path d="M17 31s-10-9.5-10-17a10 10 0 0 1 20 0c0 7.5-10 17-10 17z"/><circle cx="17" cy="14" r="3.5"/></svg>
+      <div>
+        <p class="place">Igreja Batista Betel</p>
+        <p class="addr">Rua Celso Piatti, 521 – Jaraguá</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="closing" style="animation-delay:7.2s">Sua presença será uma bênção!</p>
+
+  <!-- Ramo inferior -->
+  <svg class="branch" viewBox="0 0 260 80" aria-hidden="true">
+    <path class="stem" d="M5 25 C 60 40, 100 55, 130 50 S 210 30, 255 25" style="animation-delay:7.6s"/>
+    <path class="stem" d="M150 45 C 160 60, 165 70, 168 76" style="animation-delay:7.9s"/>
+    <g fill="#a5a98f">
+      <ellipse class="leaf" cx="60" cy="18" rx="12" ry="4.5" transform="rotate(-50 60 18)" style="animation-delay:8.1s"/>
+      <ellipse class="leaf" cx="70" cy="58" rx="12" ry="4.5" transform="rotate(40 70 58)" style="animation-delay:8.2s"/>
+      <ellipse class="leaf" cx="190" cy="55" rx="11" ry="4" transform="rotate(25 190 55)" style="animation-delay:8.3s"/>
+      <ellipse class="leaf" cx="160" cy="25" rx="10" ry="4" transform="rotate(-40 160 25)" style="animation-delay:8.35s"/>
+    </g>
+    <g class="bloom" style="animation-delay:8.4s">
+      <g fill="#f2b8bb"><circle cx="118" cy="38" r="8"/><circle cx="128" cy="45" r="8"/><circle cx="124" cy="56" r="8"/><circle cx="111" cy="56" r="8"/><circle cx="107" cy="45" r="8"/></g>
+      <circle cx="118" cy="48" r="3.5" fill="#d98a8f"/>
+    </g>
+    <circle class="bloom" cx="150" cy="30" r="4" fill="#f2b8bb" style="animation-delay:8.6s"/>
+    <circle class="bloom" cx="210" cy="28" r="4" fill="#f2b8bb" style="animation-delay:8.7s"/>
+    <circle class="bloom" cx="235" cy="22" r="3.5" fill="#f2b8bb" style="animation-delay:8.8s"/>
+    <circle class="bloom" cx="168" cy="76" r="3.5" fill="#f2b8bb" style="animation-delay:8.9s"/>
+  </svg>
+
+  <div class="petals" id="petals" aria-hidden="true"></div>
+</main>
+
+<script>
+  // Divide textos em palavras / letras para a animação cinética
+  function splitWords(el, start, step){
+    const nodes = Array.from(el.childNodes);
+    el.innerHTML = '';
+    let i = 0;
+    nodes.forEach(n => {
+      if (n.nodeType === 3){
+        n.textContent.split(/(\s+)/).forEach(part => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { el.appendChild(document.createTextNode(' ')); return; }
+          const s = document.createElement('span');
+          s.className = 'w'; s.textContent = part;
+          s.style.animationDelay = (start + i++ * step) + 's';
+          el.appendChild(s);
+        });
+      } else {
+        n.classList.add('w');
+        n.style.animationDelay = (start + i++ * step) + 's';
+        el.appendChild(n);
+      }
+    });
+  }
+
+  // "Cerimônia de Bênção da"
+  const eb = document.getElementById('eyebrow');
+  eb.innerHTML = eb.textContent.split(' ').map((w,i) =>
+    `<span style="animation-delay:${1.9 + i*0.18}s">${w}</span>`).join(' ');
+
+  // "Isadora" letra por letra
+  const nm = document.getElementById('name');
+  const letters = nm.textContent.split('');
+  nm.innerHTML = letters.map((c,i) =>
+    `<span class="l" aria-hidden="true" style="animation-delay:${2.7 + i*0.11}s">${c}</span>`).join('');
+  setTimeout(() => nm.classList.add('alive'), (2.7 + letters.length*0.11 + 1) * 1000);
+
+  // Mensagem palavra por palavra
+  splitWords(document.getElementById('message'), 4.2, 0.08);
+
+  // Pétalas
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce){
+    const box = document.getElementById('petals');
+    for (let i = 0; i < 16; i++){
+      const p = document.createElement('span');
+      p.className = 'petal';
+      const size = 8 + Math.random()*8;
+      p.style.width = size + 'px';
+      p.style.height = size*0.8 + 'px';
+      p.style.left = Math.random()*100 + 'vw';
+      p.style.animationDuration = (9 + Math.random()*8) + 's';
+      p.style.animationDelay = (3 + Math.random()*10) + 's';
+      p.style.opacity = (.4 + Math.random()*.5).toFixed(2);
+      box.appendChild(p);
+    }
+  }
+</script>
+</body>
+</html>
